@@ -1,0 +1,99 @@
+/* Reset i podstawowe ustawienia */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+/* Tło i układ strony */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* <-- ustawia elementy pionowo */
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to right, #74ebd5, #acb6e5);
+  padding: 20px;
+  gap: 20px; /* odstęp między h1 a formularzem */
+}
+
+/* Nagłówek na stronie */
+h1 {
+  text-align: center;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+/* Formularz */
+form {
+  background: #fff;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Nagłówek wewnątrz formularza */
+form h1 {
+  text-align: center;
+  color: #222;
+  margin-bottom: 20px;
+}
+
+/* Etykiety i pola tekstowe */
+label {
+  display: block;
+  margin: 10px 0 5px;
+  color: #555;
+}
+
+input[type="text"],
+input[type="radio"] + label {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 1em;
+}
+
+input[type="text"]:focus {
+  border-color: #74ebd5;
+  box-shadow: 0 0 5px rgba(116,235,213,0.5);
+}
+
+/* Radio buttony */
+input[type="radio"] {
+  margin-right: 5px;
+}
+
+input[type="radio"] + label {
+  display: inline-block;
+  width: auto;
+}
+
+/* Linki i przyciski */
+a,
+button {
+  display: inline-block;
+  background: #4ecdc4;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  transition: 0.3s;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+a:hover,
+button:hover {
+  background: #3bb3a9;
+  transform: translateY(-2px);
+}

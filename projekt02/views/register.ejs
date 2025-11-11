@@ -1,0 +1,25 @@
+<%- include("head.partial.ejs") %>
+
+<h1><%= title %></h1>
+
+<form action="/register" method="POST">
+    <label>Imię:</label><br>
+    <input type="text" name="name" required><br>
+
+    <label>Nazwisko:</label><br>
+    <input type="text" name="lname" required><br>
+
+    <label>Typ pojazdu:</label><br>
+    <input type="radio" name="vtype" id="cross" value="Cross" required><label for="cross">Cross</label>
+    <input type="radio" name="vtype" id="quad" value="Quad" required><label for="quad">Quad</label><br>
+
+    <label>Marka pojazdu:</label><br>
+    <input type="text" name="vbrand" required><br>    
+
+    <label>Model pojazdu:</label><br>
+    <input type="text" name="vmodel" required><br>
+
+    <button type="submit">Zarejestruj</button>
+</form>
+
+<%- include("foot.partial.ejs") %>
