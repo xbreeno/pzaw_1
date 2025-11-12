@@ -7,7 +7,7 @@ db.exec(`
 CREATE TABLE IF NOT EXISTS Users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    lname TEXT NOT NULL,ą
+    lname TEXT NOT NULL,
     vtype TEXT NOT NULL,
     vbrand TEXT NOT NULL,
     vmodel TEXT NOT NULL
