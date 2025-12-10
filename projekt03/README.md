@@ -1,8 +1,6 @@
 # Opis projektu
 
-Projekt realizuje prosty serwer HTTP stworzony w Node.js z wykorzystaniem frameworka Express oraz silnika szablonów EJS.
-Tematem projektu jest aplikacja do zapisów na zawody Baja Poland Cross Country.
-Aplikacja umożliwia użytkownikom rejestrację uczestników zawodów.
+Projekt realizuje prosty serwer HTTP stworzony w Node.js z wykorzystaniem frameworka Express oraz silnika szablonów EJS. Tematem projektu jest aplikacja do zapisów na zawody Baja Poland Cross Country. Aplikacja umożliwia użytkownikom rejestrację uczestników zawodów, wyświetlanie listy uczestników, usuwanie oraz edycję zapisanych uczestników.
 
 ## Uruchomienie projektu
 
