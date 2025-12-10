@@ -1,0 +1,20 @@
+<%- include("head.partial.ejs") %>
+
+<main>
+  <h1><%= title %></h1>
+
+  <% if (!users || users.length === 0) { %>
+    <p>Brak zarejestrowanych uczestników.</p>
+  <% } else { %>
+    <ul>
+      <% users.forEach(u => { %>
+        <li><strong><%= u.name %> <%= u.lname %></strong> — <%= u.vtype %> | <%= u.vbrand %> <%= u.vmodel %></li>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <a href="/register">Zarejestruj nowego uczestnika</a>
+  <a href="/">Strona główna</a>
+</main>
+
+<%- include("foot.partial.ejs") %>

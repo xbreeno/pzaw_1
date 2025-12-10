@@ -100,4 +100,16 @@ a:hover, button:hover {
   margin-top: 10px;
 }
 
+.home-buttonr {
+  display: block;
+  width: 400px;
+  margin: 10px auto;
+}
 
+.page-button {
+  display: inline-block;
+  width: 260px;
+  padding: 12px 36px;
+  margin: 8px 8px;
+  box-sizing: border-box;
+}

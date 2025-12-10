@@ -35,6 +35,17 @@ APP.post("/register", (req, res) => {
   res.redirect(`/register/success?${params}`);
 });
 
+APP.get("/participants", (req, res) => {
+  console.log("GET /participants requested");
+  try {
+    const users = db.getUsers();
+    res.render("participants", { title: "Lista uczestników", users });
+  } catch (err) {
+    console.error("Error while fetching participants:", err);
+    res.status(500).send("Błąd serwera przy pobieraniu listy uczestników.");
+  }
+});
+
 
 APP.listen(PORT, () => {
   console.log(`Serwer listening on http://localhost:${PORT}`);
