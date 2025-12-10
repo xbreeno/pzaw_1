@@ -9,15 +9,17 @@ Aplikacja umożliwia użytkownikom rejestrację uczestników zawodów.
 ### 1.Sklonowanie repozytorium:
 git clone https://github.com/xbreeno/pzaw_1.git
 
-### 2.Wejście do folderu projekt02:
-cd projekt02
+### 2.Wejście do folderu projekt03:
+cd projekt03
 
 ### 3.Zainstalowanie wymaganych pakietów:
-npm install express  
-npm install ejs
+npm install
 
-### 4.Uruchomienie serwera:
+### 4.Dodanie testowych danych(opcjonalnie):
+node scripts/testdata.js
+
+### 5.Uruchomienie serwera:
 node index.js
 
-### 5.Otwarcie aplikacji w przeglądarce:
+### 6.Otwarcie aplikacji w przeglądarce:
 http://localhost:6767

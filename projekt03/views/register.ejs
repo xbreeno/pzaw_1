@@ -2,25 +2,28 @@
 
 <h1><%= title %></h1>
 
-<form action="/register" method="POST">
+<form action="<%= editing ? ('/participants/' + user.id + '/edit') : '/register' %>" method="POST">
     <label>Imię:</label><br>
-    <input type="text" name="name" required><br>
+    <input type="text" name="name" value="<%= user ? user.name : '' %>" required><br>
 
     <label>Nazwisko:</label><br>
-    <input type="text" name="lname" required><br>
+    <input type="text" name="lname" value="<%= user ? user.lname : '' %>" required><br>
 
     <label>Typ pojazdu:</label><br>
-    <input type="radio" name="vtype" id="cross" value="Cross" required><label for="cross">Cross</label>
-    <input type="radio" name="vtype" id="quad" value="Quad" required><label for="quad">Quad</label><br>
+    <input type="radio" name="vtype" id="cross" value="Cross" required <%= user && user.vtype === 'Cross' ? 'checked' : '' %>><label for="cross">Cross</label>
+    <input type="radio" name="vtype" id="quad" value="Quad" required <%= user && user.vtype === 'Quad' ? 'checked' : '' %>><label for="quad">Quad</label><br>
 
     <label>Marka pojazdu:</label><br>
-    <input type="text" name="vbrand" required><br>    
+    <input type="text" name="vbrand" value="<%= user ? user.vbrand : '' %>" required><br>    
 
     <label>Model pojazdu:</label><br>
-    <input type="text" name="vmodel" required><br>
+    <input type="text" name="vmodel" value="<%= user ? user.vmodel : '' %>" required><br>
 
-    <button type="submit">Zarejestruj</button>
+    <button type="submit" class="submit-button"><%= editing ? 'Zapisz zmiany' : 'Zarejestruj' %></button>
 </form>
-<a href="/" class="home-buttonr">Strona główna</a>
+<a href="/" class="home-button">Strona główna</a>
+<% if (editing) { %>
+    <a href="/participants" class="cancel-button">Anuluj</a>
+<% } %>
 
 <%- include("foot.partial.ejs") %>

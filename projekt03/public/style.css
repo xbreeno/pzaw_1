@@ -100,7 +100,8 @@ a:hover, button:hover {
   margin-top: 10px;
 }
 
-.home-buttonr {
+form + .home-button,
+.home-button + .cancel-button {
   display: block;
   width: 400px;
   margin: 10px auto;
@@ -112,4 +113,41 @@ a:hover, button:hover {
   padding: 12px 36px;
   margin: 8px 8px;
   box-sizing: border-box;
+}
+
+.page-button.small {
+  width: 110px;
+  padding: 8px 12px;
+}
+
+.page-button.small.danger {
+  background: #ff5c5c;
+}
+
+.participant-actions {
+  display: inline-block;
+  margin-left: 12px;
+}
+
+.inline-delete {
+  display: inline-block;
+  margin: 0;
+}
+
+form.inline-delete {
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0;
+  width: auto;
+}
+
+form.inline-delete .page-button.small.danger {
+  box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+}
+
+.participant-actions {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
 }

@@ -12,7 +12,7 @@ APP.set("views", "./views");
 APP.use(express.urlencoded({ extended: true }));
 
 APP.get("/register", (req, res) => {
-  res.render("register", { title: "Rejestracja" });
+  res.render("register", { title: "Rejestracja", editing: false, user: null });
 });
 
 APP.get("/register/success", (req, res) => {
@@ -43,6 +43,41 @@ APP.get("/participants", (req, res) => {
   } catch (err) {
     console.error("Error while fetching participants:", err);
     res.status(500).send("Błąd serwera przy pobieraniu listy uczestników.");
+  }
+});
+
+APP.get('/participants/:id/edit', (req, res) => {
+  const id = req.params.id;
+  try {
+    const user = db.getUserById(id);
+    if (!user) return res.status(404).send('Uczestnik nie znaleziony');
+    res.render('register', { title: 'Edytuj uczestnika', user, editing: true });
+  } catch (err) {
+    console.error('Error while fetching user for edit:', err);
+    res.status(500).send('Błąd serwera przy pobieraniu uczestnika.');
+  }
+});
+
+APP.post('/participants/:id/edit', (req, res) => {
+  const id = req.params.id;
+  const { name, lname, vtype, vbrand, vmodel } = req.body;
+  try {
+    db.updateUser(id, name, lname, vtype, vbrand, vmodel);
+    res.redirect('/participants');
+  } catch (err) {
+    console.error('Error while updating user:', err);
+    res.status(500).send('Błąd serwera przy aktualizacji uczestnika.');
+  }
+});
+
+APP.post('/participants/:id/delete', (req, res) => {
+  const id = req.params.id;
+  try {
+    db.deleteUser(id);
+    res.redirect('/participants');
+  } catch (err) {
+    console.error('Error while deleting user:', err);
+    res.status(500).send('Błąd serwera przy usuwaniu uczestnika.');
   }
 });
 
