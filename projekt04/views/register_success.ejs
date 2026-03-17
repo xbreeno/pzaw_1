@@ -1,0 +1,15 @@
+<%- include("head.partial.ejs") %>
+
+<main>
+  <h1><%= title %></h1>
+
+  <section class="success-card">
+    <p class="success-text">Dziękujemy za rejestrację, <strong><%= name %> <%= lname %></strong>!</p>
+    <p>Zarejestrowano pojazd: <strong><%= vtype %> - <%= vbrand %> <%= vmodel %></strong></p>
+
+    <a href="/register" class="back-button">Wróć do formularza</a>
+    <a href="/" class="home-button">Strona główna</a>
+  </section>
+</main>
+
+<%- include("foot.partial.ejs") %>
