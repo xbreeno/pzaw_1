@@ -8,7 +8,6 @@ const db = new DatabaseSync(db_path, { readBigInts: true });
 const SESSION_COOKIE = "session_id";
 const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
 
-// Table storing server-side session information.
 db.exec(`
   CREATE TABLE IF NOT EXISTS sessions (
     id INTEGER PRIMARY KEY,

@@ -10,15 +10,23 @@ CREATE TABLE IF NOT EXISTS Users (
     lname TEXT NOT NULL,
     vtype TEXT NOT NULL,
     vbrand TEXT NOT NULL,
-    vmodel TEXT NOT NULL
+    vmodel TEXT NOT NULL,
+    created_by INTEGER
 ) STRICT;
 `);
 
-function addUser(name, lname, vtype, vbrand, vmodel) {
+// keep compatible with older schema
+try {
+  db.exec("ALTER TABLE Users ADD COLUMN created_by INTEGER;");
+} catch (err) {
+  // column might already exist
+}
+
+function addUser(name, lname, vtype, vbrand, vmodel, created_by = null) {
     const stmt = db.prepare(
-        "INSERT INTO Users (name, lname, vtype, vbrand, vmodel) VALUES (?, ?, ?, ?, ?);"
+        "INSERT INTO Users (name, lname, vtype, vbrand, vmodel, created_by) VALUES (?, ?, ?, ?, ?, ?);"
     );
-    return stmt.run(name, lname, vtype, vbrand, vmodel);
+    return stmt.run(name, lname, vtype, vbrand, vmodel, created_by);
 }
 
 function getUsers() {

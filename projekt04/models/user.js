@@ -8,9 +8,7 @@ if (PEPPER == null) {
   );
 }
 
-const HASH_PARAMS = {
-  secret: PEPPER != null ? Buffer.from(PEPPER, "hex") : undefined,
-};
+const HASH_PARAMS = PEPPER != null ? { secret: Buffer.from(PEPPER, "hex") } : {};
 
 const db_path = "./data.sqlite";
 const db = new DatabaseSync(db_path);
@@ -20,33 +18,45 @@ db.exec(`
     id INTEGER PRIMARY KEY,
     username TEXT UNIQUE,
     passhash TEXT,
-    created_at INTEGER
+    created_at INTEGER,
+    is_admin INTEGER DEFAULT 0
   ) STRICT;
 `);
 
+try {
+  db.exec("ALTER TABLE users_auth ADD COLUMN is_admin INTEGER DEFAULT 0;");
+} catch (err) {
+}
+
 const db_ops = {
   create_user: db.prepare(
-    "INSERT INTO users_auth (username, passhash, created_at) VALUES (?, ?, ?) RETURNING id;"
+    "INSERT INTO users_auth (username, passhash, created_at, is_admin) VALUES (?, ?, ?, ?) RETURNING id, username, created_at, is_admin;"
   ),
   get_user: db.prepare(
-    "SELECT id, username, created_at FROM users_auth WHERE id = ?;"
+    "SELECT id, username, created_at, is_admin FROM users_auth WHERE id = ?;"
   ),
   find_by_username: db.prepare(
-    "SELECT id, username, created_at FROM users_auth WHERE username = ?;"
+    "SELECT id, username, created_at, is_admin FROM users_auth WHERE username = ?;"
   ),
   get_auth_data: db.prepare(
     "SELECT id, passhash FROM users_auth WHERE username = ?;"
   ),
+  find_admin: db.prepare(
+    "SELECT id, username, created_at, is_admin FROM users_auth WHERE is_admin = 1 LIMIT 1;"
+  ),
+  promote_user: db.prepare(
+    "UPDATE users_auth SET is_admin = 1 WHERE id = ?;"
+  ),
 };
 
-export async function createUser(username, password) {
+export async function createUser(username, password, isAdmin = 0) {
   let existing_user = db_ops.find_by_username.get(username);
   if (existing_user != null) {
     return null;
   }
   let createdAt = Date.now();
   let passhash = await argon2.hash(password, HASH_PARAMS);
-  return db_ops.create_user.get(username, passhash, createdAt);
+  return db_ops.create_user.get(username, passhash, createdAt, isAdmin);
 }
 
 export async function validatePassword(username, password) {
@@ -63,8 +73,38 @@ export function getUser(user_id) {
   return db_ops.get_user.get(user_id);
 }
 
+export function getAdminUser() {
+  return db_ops.find_admin.get();
+}
+
+const DEFAULT_ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? "admin";
+const DEFAULT_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "admin1234";
+
+export async function ensureAdminUser() {
+  let admin = getAdminUser();
+  if (admin) return admin;
+
+  const adminUsername = DEFAULT_ADMIN_USERNAME;
+  const adminPassword = DEFAULT_ADMIN_PASSWORD;
+
+  let existing = db_ops.find_by_username.get(adminUsername);
+  if (existing) {
+    db_ops.promote_user.run(existing.id);
+    console.log(`Promoted existing user '${adminUsername}' to admin.`);
+    return getUser(existing.id);
+  }
+
+  let newAdmin = await createUser(adminUsername, adminPassword, 1);
+  if (newAdmin) {
+    console.log(`Created default admin user '${adminUsername}'.`);
+  }
+  return newAdmin;
+}
+
 export default {
   createUser,
   validatePassword,
   getUser,
+  getAdminUser,
+  ensureAdminUser,
 };

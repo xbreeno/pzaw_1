@@ -10,12 +10,17 @@
       <% users.forEach(u => { %>
         <li>
           <strong><%= u.name %> <%= u.lname %></strong> — <%= u.vtype %> | <%= u.vbrand %> <%= u.vmodel %>
-          <span class="participant-actions">
-            <a href="/participants/<%= u.id %>/edit" class="page-button small">Edytuj</a>
-            <form action="/participants/<%= u.id %>/delete" method="POST" class="inline-delete">
-              <button type="submit" class="page-button small danger">Usuń</button>
-            </form>
-          </span>
+          <% const isOwner = currentUser && u.created_by != null && Number(u.created_by) === Number(currentUser.id);
+             const isAdmin = currentUser && currentUser.is_admin;
+          %>
+          <% if (isOwner || isAdmin) { %>
+            <span class="participant-actions">
+              <a href="/participants/<%= u.id %>/edit" class="page-button small">Edytuj</a>
+              <form action="/participants/<%= u.id %>/delete" method="POST" class="inline-delete">
+                <button type="submit" class="page-button small danger">Usuń</button>
+              </form>
+            </span>
+          <% } %>
         </li>
       <% }) %>
     </ul>
