@@ -54,6 +54,56 @@ function requireOwnerOrAdmin(req, res, next) {
   next();
 }
 
+const PARTICIPANT_TYPES = ["Cross", "Quad"];
+
+function getParticipantData(req) {
+  return {
+    name: req.body.name?.trim() ?? "",
+    lname: req.body.lname?.trim() ?? "",
+    vtype: req.body.vtype ?? "",
+    vbrand: req.body.vbrand?.trim() ?? "",
+    vmodel: req.body.vmodel?.trim() ?? "",
+  };
+}
+
+function validateParticipant(data) {
+  const errors = {};
+
+  if (!data.name) {
+    errors.name = "Podaj imię";
+  } else if (data.name.length < 2) {
+    errors.name = "Imię musi mieć przynajmniej 2 znaki";
+  }
+
+  if (!data.lname) {
+    errors.lname = "Podaj nazwisko";
+  } else if (data.lname.length < 2) {
+    errors.lname = "Nazwisko musi mieć przynajmniej 2 znaki";
+  }
+
+  if (!PARTICIPANT_TYPES.includes(data.vtype)) {
+    errors.vtype = "Wybierz typ pojazdu";
+  }
+
+  if (!data.vbrand) {
+    errors.vbrand = "Podaj markę pojazdu";
+  } else if (data.vbrand.length < 2) {
+    errors.vbrand = "Marka musi mieć przynajmniej 2 znaki";
+  }
+
+  if (!data.vmodel) {
+    errors.vmodel = "Podaj model pojazdu";
+  } else if (data.vmodel.length < 2) {
+    errors.vmodel = "Model musi mieć przynajmniej 2 znaki";
+  }
+
+  return errors;
+}
+
+function renderParticipantForm(res, { title, editing, form }) {
+  res.render("register", { title, editing, form });
+}
+
 APP.get("/", (req, res) => {
   res.render("home", { title: "Strona główna" });
 });
@@ -66,8 +116,16 @@ authRouter.post("/login", auth.login_post);
 authRouter.get("/logout", auth.logout);
 APP.use("/auth", authRouter);
 
-APP.get("/register", (req, res) => {
-  res.render("register", { title: "Rejestracja", editing: false, user: null });
+APP.get("/register", requireLogin, (req, res) => {
+  renderParticipantForm(res, {
+    title: "Rejestracja uczestnika",
+    editing: false,
+    form: {
+      data: { name: "", lname: "", vtype: "", vbrand: "", vmodel: "" },
+      errors: {},
+      action: "/register",
+    },
+  });
 });
 
 APP.get("/register/success", (req, res) => {
@@ -82,12 +140,33 @@ APP.get("/register/success", (req, res) => {
   });
 });
 
-APP.post("/register", (req, res) => {
-  const { name, lname, vtype, vbrand, vmodel } = req.body;
-  const created_by = res.locals.currentUser?.id ?? null;
+APP.post("/register", requireLogin, (req, res) => {
+  const formData = getParticipantData(req);
+  const errors = validateParticipant(formData);
 
-  db.addUser(name, lname, vtype, vbrand, vmodel, created_by);
-  const params = new URLSearchParams({ name, lname, vtype, vbrand, vmodel }).toString();
+  if (Object.keys(errors).length > 0) {
+    renderParticipantForm(res, {
+      title: "Rejestracja uczestnika",
+      editing: false,
+      form: {
+        data: formData,
+        errors,
+        action: "/register",
+      },
+    });
+    return;
+  }
+
+  db.addUser(
+    formData.name,
+    formData.lname,
+    formData.vtype,
+    formData.vbrand,
+    formData.vmodel,
+    res.locals.currentUser.id,
+  );
+
+  const params = new URLSearchParams(formData).toString();
   res.redirect(`/register/success?${params}`);
 });
 
@@ -104,14 +183,43 @@ APP.get("/participants", (req, res) => {
 
 APP.get('/participants/:id/edit', requireOwnerOrAdmin, (req, res) => {
   const user = res.locals.participant;
-  res.render('register', { title: 'Edytuj uczestnika', user, editing: true });
+  renderParticipantForm(res, {
+    title: 'Edytuj uczestnika',
+    editing: true,
+    form: {
+      data: {
+        name: user.name,
+        lname: user.lname,
+        vtype: user.vtype,
+        vbrand: user.vbrand,
+        vmodel: user.vmodel,
+      },
+      errors: {},
+      action: `/participants/${user.id}/edit`,
+    },
+  });
 });
 
 APP.post('/participants/:id/edit', requireOwnerOrAdmin, (req, res) => {
   const id = req.params.id;
-  const { name, lname, vtype, vbrand, vmodel } = req.body;
+  const formData = getParticipantData(req);
+  const errors = validateParticipant(formData);
+
+  if (Object.keys(errors).length > 0) {
+    renderParticipantForm(res, {
+      title: 'Edytuj uczestnika',
+      editing: true,
+      form: {
+        data: formData,
+        errors,
+        action: `/participants/${id}/edit`,
+      },
+    });
+    return;
+  }
+
   try {
-    db.updateUser(id, name, lname, vtype, vbrand, vmodel);
+    db.updateUser(id, formData.name, formData.lname, formData.vtype, formData.vbrand, formData.vmodel);
     res.redirect('/participants');
   } catch (err) {
     console.error('Error while updating user:', err);
@@ -135,7 +243,7 @@ await ensureAdminUser()
     if (admin) {
       console.log(`Admin account active: ${admin.username}`);
     } else {
-      console.log("No admin account configured. A default admin account will be created.");
+      console.log("Brak konta administratora. Upewnij się, że zdefiniowano ADMIN_USERNAME i ADMIN_PASSWORD.");
     }
   })
   .catch((err) => {

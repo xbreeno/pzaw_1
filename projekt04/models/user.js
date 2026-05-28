@@ -77,15 +77,19 @@ export function getAdminUser() {
   return db_ops.find_admin.get();
 }
 
-const DEFAULT_ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? "admin";
-const DEFAULT_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "admin1234";
-
 export async function ensureAdminUser() {
+  const adminUsername = process.env.ADMIN_USERNAME;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (!adminUsername || !adminPassword) {
+    console.warn(
+      "Brak danych administratora w zmiennych środowiskowych. Skonfiguruj ADMIN_USERNAME i ADMIN_PASSWORD w pliku .env."
+    );
+    return null;
+  }
+
   let admin = getAdminUser();
   if (admin) return admin;
-
-  const adminUsername = DEFAULT_ADMIN_USERNAME;
-  const adminPassword = DEFAULT_ADMIN_PASSWORD;
 
   let existing = db_ops.find_by_username.get(adminUsername);
   if (existing) {

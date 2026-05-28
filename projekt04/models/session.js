@@ -16,6 +16,8 @@ db.exec(`
   ) STRICT;
 `);
 
+db.exec("DELETE FROM sessions WHERE user_id IS NULL;");
+
 const db_ops = {
   create_session: db.prepare(
     `INSERT INTO sessions (id, user_id, created_at) VALUES (?, ?, ?) RETURNING id, user_id, created_at;`
@@ -37,6 +39,10 @@ function parseSessionId(sessionId) {
 }
 
 export function createSession(userId, res) {
+  if (userId == null) {
+    return null;
+  }
+
   let sessionId = randomBytes(8).readBigInt64BE();
   let createdAt = Date.now();
 
@@ -44,7 +50,7 @@ export function createSession(userId, res) {
   if (session == null) return null;
 
   res.locals.session = session;
-  res.locals.currentUser = userId != null ? getUser(userId) : null;
+  res.locals.currentUser = getUser(userId);
 
   res.cookie(SESSION_COOKIE, session.id.toString(), {
     maxAge: ONE_WEEK,
@@ -75,14 +81,9 @@ export function sessionHandler(req, res, next) {
     session = db_ops.get_session.get(sessionId);
   }
 
-  if (session != null) {
+  if (session != null && session.user_id != null) {
     res.locals.session = session;
-    if (session.user_id != null) {
-      res.locals.currentUser = getUser(session.user_id);
-    } else {
-      res.locals.currentUser = null;
-    }
-
+    res.locals.currentUser = getUser(session.user_id);
     res.cookie(SESSION_COOKIE, session.id.toString(), {
       maxAge: ONE_WEEK,
       httpOnly: true,
@@ -91,7 +92,14 @@ export function sessionHandler(req, res, next) {
       path: "/",
     });
   } else {
-    session = createSession(null, res);
+    if (session != null) {
+      db_ops.delete_session.run(session.id);
+    }
+    if (sessionId != null) {
+      res.clearCookie(SESSION_COOKIE, { path: "/" });
+    }
+    res.locals.session = null;
+    res.locals.currentUser = null;
   }
 
   next();

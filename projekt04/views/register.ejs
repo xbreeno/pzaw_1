@@ -1,29 +1,61 @@
 <%- include("head.partial.ejs") %>
 
-<h1><%= title %></h1>
+<main class="form-page">
+  <h1><%= title %></h1>
 
-<form action="<%= editing ? ('/participants/' + user.id + '/edit') : '/register' %>" method="POST">
-    <label>Imię:</label><br>
-    <input type="text" name="name" value="<%= user ? user.name : '' %>" required><br>
+  <form action="<%= form.action %>" method="POST" novalidate>
+    <div class="field-group">
+      <label for="name">Imię</label>
+      <input id="name" type="text" name="name" value="<%= form.data.name %>" required>
+      <% if (form.errors.name) { %>
+        <span class="error-message"><%= form.errors.name %></span>
+      <% } %>
+    </div>
 
-    <label>Nazwisko:</label><br>
-    <input type="text" name="lname" value="<%= user ? user.lname : '' %>" required><br>
+    <div class="field-group">
+      <label for="lname">Nazwisko</label>
+      <input id="lname" type="text" name="lname" value="<%= form.data.lname %>" required>
+      <% if (form.errors.lname) { %>
+        <span class="error-message"><%= form.errors.lname %></span>
+      <% } %>
+    </div>
 
-    <label>Typ pojazdu:</label><br>
-    <input type="radio" name="vtype" id="cross" value="Cross" required <%= user && user.vtype === 'Cross' ? 'checked' : '' %>><label for="cross">Cross</label>
-    <input type="radio" name="vtype" id="quad" value="Quad" required <%= user && user.vtype === 'Quad' ? 'checked' : '' %>><label for="quad">Quad</label><br>
+    <fieldset class="field-group radio-group">
+      <legend>Typ pojazdu</legend>
+      <label class="radio-option">
+        <span>Cross</span>
+        <input type="radio" name="vtype" value="Cross" <%= form.data.vtype === 'Cross' ? 'checked' : '' %> required>
+      </label>
+      <label class="radio-option">
+        <span>Quad</span>
+        <input type="radio" name="vtype" value="Quad" <%= form.data.vtype === 'Quad' ? 'checked' : '' %> required>
+      </label>
+      <% if (form.errors.vtype) { %>
+        <span class="error-message"><%= form.errors.vtype %></span>
+      <% } %>
+    </fieldset>
 
-    <label>Marka pojazdu:</label><br>
-    <input type="text" name="vbrand" value="<%= user ? user.vbrand : '' %>" required><br>    
+    <div class="field-group">
+      <label for="vbrand">Marka pojazdu</label>
+      <input id="vbrand" type="text" name="vbrand" value="<%= form.data.vbrand %>" required>
+      <% if (form.errors.vbrand) { %>
+        <span class="error-message"><%= form.errors.vbrand %></span>
+      <% } %>
+    </div>
 
-    <label>Model pojazdu:</label><br>
-    <input type="text" name="vmodel" value="<%= user ? user.vmodel : '' %>" required><br>
+    <div class="field-group">
+      <label for="vmodel">Model pojazdu</label>
+      <input id="vmodel" type="text" name="vmodel" value="<%= form.data.vmodel %>" required>
+      <% if (form.errors.vmodel) { %>
+        <span class="error-message"><%= form.errors.vmodel %></span>
+      <% } %>
+    </div>
 
-    <button type="submit" class="submit-button"><%= editing ? 'Zapisz zmiany' : 'Zarejestruj' %></button>
-</form>
-<a href="/" class="home-button">Strona główna</a>
-<% if (editing) { %>
-    <a href="/participants" class="cancel-button">Anuluj</a>
-<% } %>
+    <div class="button-row">
+      <button type="submit" class="submit-button"><%= editing ? 'Zapisz zmiany' : 'Zarejestruj' %></button>
+      <a href="/participants" class="page-button">Lista uczestników</a>
+    </div>
+  </form>
+</main>
 
 <%- include("foot.partial.ejs") %>

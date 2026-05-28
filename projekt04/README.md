@@ -6,11 +6,14 @@ Dodatkowo projekt zawiera system logowania i rejestracji użytkowników oparty o
 
 ## Konto administratora
 
-Przy starcie aplikacja tworzy konto administratora automatycznie w bazie, jeśli jeszcze nie istnieje:
+Przy starcie aplikacja tworzy konto administratora automatycznie w bazie, jeśli jeszcze nie istnieje.
+Dane administratora pobierane są z pliku `.env`:
 
-- `username`: wartość `ADMIN_USERNAME` z `.env`, domyślnie `admin`
-- `password`: wartość `ADMIN_PASSWORD` z `.env`, domyślnie `admin1234`
+- `username`: wartość `ADMIN_USERNAME` z `.env`
+- `password`: wartość `ADMIN_PASSWORD` z `.env`
 - `is_admin`: `1`
+
+Jeżeli nie skonfigurujesz `ADMIN_USERNAME` i `ADMIN_PASSWORD`, aplikacja nie utworzy konta administratora automatycznie.
 
 Dzięki temu zawsze możesz się zalogować i mieć pełne uprawnienia.
 
@@ -18,9 +21,15 @@ Dzięki temu zawsze możesz się zalogować i mieć pełne uprawnienia.
 
 1. Wejdź na stronę logowania: `http://localhost:6767/auth/login`
 2. Podaj dane administratora:
-   - login: `admin` (lub `ADMIN_USERNAME` z `.env`)
-   - hasło: `admin1234` (lub `ADMIN_PASSWORD` z `.env`)
+   - login: wartość `ADMIN_USERNAME` z `.env`
+   - hasło: wartość `ADMIN_PASSWORD` z `.env`
 3. Po zalogowaniu zobaczysz, że możesz edytować i usuwać wszystkie wpisy uczestników.
+
+## Rejestracja uczestnika
+
+Aby dodać nowego uczestnika, musisz być zalogowanym użytkownikiem. Po zalogowaniu przejdź do:
+
+- `http://localhost:6767/register`
 
 ## Uruchomienie projektu
 

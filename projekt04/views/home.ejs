@@ -5,12 +5,13 @@
 
   <% if (currentUser) { %>
     <p>Witaj, <%= currentUser.username %>!</p>
-    <p><a href="/auth/logout">Wyloguj się</a></p>
+    <p><a href="/register">Zarejestruj nowego uczestnika</a></p>
   <% } else { %>
+    <p>Aby dodać uczestnika, zaloguj się lub utwórz konto.</p>
     <p><a href="/auth/login">Zaloguj się</a> lub <a href="/auth/signup">Zarejestruj się</a></p>
   <% } %>
 
-  <p><a href="/participants">Lista uczestników</a></p>
+  <p><a href="/participants">Zobacz listę uczestników</a></p>
 </main>
 
 <%- include("foot.partial.ejs") %>

@@ -9,11 +9,13 @@
   <body>
     <nav class="navbar">
       <a href="/">Strona główna</a>
+      <a href="/participants">Lista uczestników</a>
       <% if (typeof currentUser !== "undefined" && currentUser) { %>
+        <a href="/register">Nowy uczestnik</a>
         <span class="navbar-user">Zalogowany jako <strong><%= currentUser.username %></strong></span>
         <a href="/auth/logout">Wyloguj</a>
       <% } else { %>
         <a href="/auth/login">Zaloguj</a>
-        <a href="/auth/signup">Zarejestruj</a>
+        <a href="/auth/signup">Rejestracja konta</a>
       <% } %>
     </nav>
