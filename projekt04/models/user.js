@@ -1,14 +1,14 @@
 import { DatabaseSync } from "node:sqlite";
 import argon2 from "argon2";
 
-const PEPPER = process.env.PEPPER ?? null;
-if (PEPPER == null) {
-  console.warn(
-    "PEPPER environment variable missing. Password hashing will still work, but it is recommended to set PEPPER for better security."
-  );
+function getPepper() {
+  return process.env.PEPPER ?? null;
 }
 
-const HASH_PARAMS = PEPPER != null ? { secret: Buffer.from(PEPPER, "hex") } : {};
+function getHashParams() {
+  const pepper = getPepper();
+  return pepper != null ? { secret: Buffer.from(pepper, "hex") } : {};
+}
 
 const db_path = "./data.sqlite";
 const db = new DatabaseSync(db_path);
@@ -47,6 +47,9 @@ const db_ops = {
   promote_user: db.prepare(
     "UPDATE users_auth SET is_admin = 1 WHERE id = ?;"
   ),
+  update_password: db.prepare(
+    "UPDATE users_auth SET passhash = ? WHERE id = ?;"
+  ),
 };
 
 export async function createUser(username, password, isAdmin = 0) {
@@ -55,14 +58,14 @@ export async function createUser(username, password, isAdmin = 0) {
     return null;
   }
   let createdAt = Date.now();
-  let passhash = await argon2.hash(password, HASH_PARAMS);
+  let passhash = await argon2.hash(password, getHashParams());
   return db_ops.create_user.get(username, passhash, createdAt, isAdmin);
 }
 
 export async function validatePassword(username, password) {
   let auth_data = db_ops.get_auth_data.get(username);
   if (auth_data != null) {
-    if (await argon2.verify(auth_data.passhash, password, HASH_PARAMS)) {
+    if (await argon2.verify(auth_data.passhash, password, getHashParams())) {
       return auth_data.id;
     }
   }
@@ -77,6 +80,11 @@ export function getAdminUser() {
   return db_ops.find_admin.get();
 }
 
+export async function updateUserPassword(userId, password) {
+  const passhash = await argon2.hash(password, getHashParams());
+  db_ops.update_password.run(passhash, userId);
+}
+
 export async function ensureAdminUser() {
   const adminUsername = process.env.ADMIN_USERNAME;
   const adminPassword = process.env.ADMIN_PASSWORD;
@@ -88,13 +96,22 @@ export async function ensureAdminUser() {
     return null;
   }
 
-  let admin = getAdminUser();
-  if (admin) return admin;
-
   let existing = db_ops.find_by_username.get(adminUsername);
   if (existing) {
-    db_ops.promote_user.run(existing.id);
-    console.log(`Promoted existing user '${adminUsername}' to admin.`);
+    if (existing.is_admin !== 1) {
+      db_ops.promote_user.run(existing.id);
+      console.log(`Promoted existing user '${adminUsername}' to admin.`);
+    }
+
+    const authData = db_ops.get_auth_data.get(adminUsername);
+    const validPassword = authData
+      ? await argon2.verify(authData.passhash, adminPassword, getHashParams())
+      : false;
+    if (!validPassword) {
+      await updateUserPassword(existing.id, adminPassword);
+      console.log(`Updated password for admin user '${adminUsername}'.`);
+    }
+
     return getUser(existing.id);
   }
 

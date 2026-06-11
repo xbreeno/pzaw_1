@@ -1,0 +1,12 @@
+-Brak walidacji przy uczestnikach (index.js)
+Formularze dodawania i edycji uczestnika (/register i /participants/:id/edit) nie sprawdzają, co użytkownik wpisuje w pola
+-Zapychająca się baza przez sesje gości (session.js)
+sessionHandler przy każdym wejściu na stronę tworzy nowy wpis sesji w bazie z user_id = null
+-Dane admina wpisane na sztywno w kodzie
+-przy wyborze cross i quad rozdzielbym wybory nowa linia i nazwe dal na lewo od radio buton (ale to moje preferencje)
+-trochę nie intuicyjne bo zapisz się proawdzic do strony gdzie masz rejestracje a w tym samym miejscu jest przycisk który przenosi do rejestracji(innej)
+-bez logowania można kogos zapisac może to powodować problem z zbyt duza iloscia rekordow w bazie 
+-szkoda ze po zapisaniu do listy uczestnikow nie ma powrotu do niej 
++ Automatyczna inicjalizacja: Funkcja ensureAdminUser(), która sama dba o to, żeby konto admina istniało przy starcie
++ README.md czytelne 
+Ogolnie byl pozmienial ustawienie co gdzi ejst na stronie niz samo dzialanie strony

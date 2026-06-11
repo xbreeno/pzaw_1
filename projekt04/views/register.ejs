@@ -4,6 +4,7 @@
   <h1><%= title %></h1>
 
   <form action="<%= form.action %>" method="POST" novalidate>
+    <input type="hidden" name="csrf_token" value="<%= csrfToken || "" %>">
     <div class="field-group">
       <label for="name">Imię</label>
       <input id="name" type="text" name="name" value="<%= form.data.name %>" required>
@@ -53,7 +54,6 @@
 
     <div class="button-row">
       <button type="submit" class="submit-button"><%= editing ? 'Zapisz zmiany' : 'Zarejestruj' %></button>
-      <a href="/participants" class="page-button">Lista uczestników</a>
     </div>
   </form>
 </main>

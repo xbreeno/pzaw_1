@@ -11,7 +11,9 @@
       <a href="/">Strona główna</a>
       <a href="/participants">Lista uczestników</a>
       <% if (typeof currentUser !== "undefined" && currentUser) { %>
-        <a href="/register">Nowy uczestnik</a>
+        <% if (typeof currentPath === "undefined" || currentPath !== "/register") { %>
+          <a href="/register">Nowy uczestnik</a>
+        <% } %>
         <span class="navbar-user">Zalogowany jako <strong><%= currentUser.username %></strong></span>
         <a href="/auth/logout">Wyloguj</a>
       <% } else { %>

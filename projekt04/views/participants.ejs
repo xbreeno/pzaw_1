@@ -17,6 +17,7 @@
             <span class="participant-actions">
               <a href="/participants/<%= u.id %>/edit" class="page-button small">Edytuj</a>
               <form action="/participants/<%= u.id %>/delete" method="POST" class="inline-delete">
+                <input type="hidden" name="csrf_token" value="<%= csrfToken || "" %>">
                 <button type="submit" class="page-button small danger">Usuń</button>
               </form>
             </span>
@@ -25,13 +26,6 @@
       <% }) %>
     </ul>
   <% } %>
-
-  <% if (currentUser) { %>
-    <a href="/register">Zarejestruj nowego uczestnika</a>
-  <% } else { %>
-    <p>Aby dodać uczestnika, <a href="/auth/login">zaloguj się</a> lub <a href="/auth/signup">załóż konto</a>.</p>
-  <% } %>
-  <a href="/">Strona główna</a>
 </main>
 
 <%- include("foot.partial.ejs") %>

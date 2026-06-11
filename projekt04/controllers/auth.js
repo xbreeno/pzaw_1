@@ -8,6 +8,7 @@ export function signup_get(req, res) {
     errors: {},
     action: "/auth/signup",
     method: "POST",
+    submit_text: "Zarejestruj się",
   };
   res.render("auth_signup", { title: "Rejestracja", form });
 }
@@ -18,6 +19,7 @@ export async function signup_post(req, res) {
     fields: signup_form_fields,
     action: "/auth/signup",
     method: "POST",
+    submit_text: "Zarejestruj się",
   };
   form.errors = validateForm(form.data, form.fields);
 
@@ -42,6 +44,7 @@ export function login_get(req, res) {
     errors: {},
     action: "/auth/login",
     method: "POST",
+    submit_text: "Zaloguj się",
   };
   res.render("auth_login", { title: "Logowanie", form });
 }
@@ -50,8 +53,10 @@ export async function login_post(req, res) {
   let form = {
     data: getFormData(req, login_form_fields),
     fields: login_form_fields,
+    errors: {},
     action: "/auth/login",
     method: "POST",
+    submit_text: "Zaloguj się",
   };
   form.errors = validateForm(form.data, form.fields);
 

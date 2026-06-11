@@ -1,20 +1,21 @@
-<form class="form" action="<%- action %>" method="<%- method %>">
+<form class="form" action="<%= action %>" method="<%= method %>">
+  <input type="hidden" name="csrf_token" value="<%= csrfToken || "" %>">
   <% fields.forEach((field) => { %>
   <div class="form-row">
-    <label for="field_<%- field.name %>"><%= field.display_name %></label>
+    <label for="field_<%= field.name %>"><%= field.display_name %></label>
     <div class="form-input">
       <input 
-        type="<%- field.type %>"
-        name="<%- field.name %>"
-        id="field_<%- field.name %>"
+        type="<%= field.type %>"
+        name="<%= field.name %>"
+        id="field_<%= field.name %>"
         <% if (field.required) { %>
         required
         <% } %>
         <% if (field.min_length) { %>
-        minlength="<%- field.min_length %>"
+        minlength="<%= field.min_length %>"
         <% } %>
         <% if (field.max_length) { %>
-        maxlength="<%- field.max_length %>"
+        maxlength="<%= field.max_length %>"
         <% } %>
         <% if (data[field.name]) { %>
         value="<%= data[field.name] %>"

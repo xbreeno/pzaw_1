@@ -1,14 +1,18 @@
 import express from "express";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
-
+import { randomBytes } from "node:crypto";
 import db from "./database/db.js";
 import session from "./models/session.js";
 import auth from "./controllers/auth.js";
 import { ensureAdminUser } from "./models/user.js";
 
-dotenv.config();
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+dotenv.config({ path: join(__dirname, ".env") });
 
 const APP = express();
 const PORT = process.env.PORT || 6767;
@@ -19,6 +23,36 @@ APP.use(express.urlencoded({ extended: true }));
 APP.use(morgan("dev"));
 APP.use(cookieParser(SECRET));
 APP.use(session.sessionHandler);
+
+function ensureCsrfToken(req, res, next) {
+  const CSRF_COOKIE = "csrf_token";
+  let token = req.signedCookies[CSRF_COOKIE];
+  if (typeof token !== "string" || token.length !== 32) {
+    token = randomBytes(16).toString("hex");
+    res.cookie(CSRF_COOKIE, token, {
+      signed: true,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
+  }
+  res.locals.csrfToken = token;
+
+  if (req.method === "POST") {
+    if (req.body.csrf_token !== token) {
+      return res.status(403).send("Próba wysłania formularza bez ważnego tokenu CSRF.");
+    }
+  }
+  next();
+}
+
+APP.use((req, res, next) => {
+  res.locals.currentPath = req.path;
+  next();
+});
+
+APP.use(ensureCsrfToken);
 
 APP.use(express.static("public"));
 
@@ -129,15 +163,7 @@ APP.get("/register", requireLogin, (req, res) => {
 });
 
 APP.get("/register/success", (req, res) => {
-  const { name, lname, vtype, vbrand, vmodel } = req.query;
-  res.render("register_success", {
-    title: "Rejestracja zakończona",
-    name,
-    lname,
-    vtype,
-    vbrand,
-    vmodel,
-  });
+  res.redirect("/register");
 });
 
 APP.post("/register", requireLogin, (req, res) => {
@@ -166,15 +192,21 @@ APP.post("/register", requireLogin, (req, res) => {
     res.locals.currentUser.id,
   );
 
-  const params = new URLSearchParams(formData).toString();
-  res.redirect(`/register/success?${params}`);
+  res.render("register_success", {
+    title: "Rejestracja zakończona",
+    name: formData.name,
+    lname: formData.lname,
+    vtype: formData.vtype,
+    vbrand: formData.vbrand,
+    vmodel: formData.vmodel,
+  });
 });
 
 APP.get("/participants", (req, res) => {
   console.log("GET /participants requested");
   try {
     const users = db.getUsers();
-    res.render("participants", { title: "Lista uczestników", users });
+    res.render("participants", { title: "Lista uczestników", users, currentPath: req.path });
   } catch (err) {
     console.error("Error while fetching participants:", err);
     res.status(500).send("Błąd serwera przy pobieraniu listy uczestników.");

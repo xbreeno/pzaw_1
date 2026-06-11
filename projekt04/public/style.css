@@ -22,6 +22,17 @@ h1 {
   margin-bottom: 10px;
 }
 
+main ul {
+  margin: 24px auto 32px;
+  padding-left: 24px;
+  max-width: 720px;
+}
+
+main li {
+  margin: 8px 0;
+  line-height: 1.7;
+}
+
 form {
   background: #fff;
   padding: 30px;
@@ -96,14 +107,21 @@ input[type="password"]:focus {
 
 .button-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 10px;
-  justify-content: space-between;
+  align-items: stretch;
+}
+
+.button-row > * {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 button.submit-button,
-.page-button {
-  width: auto;
+.button-row .page-button {
+  width: 100%;
   padding: 12px 20px;
 }
 
@@ -123,9 +141,30 @@ a, button {
   margin-top: 20px;
 }
 
-a:hover, button:hover {
-  background: #3bb3a9;
-  transform: translateY(-2px);
+a.text-link {
+  display: inline;
+  background: transparent;
+  color: #006770;
+  font-weight: 700;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  width: auto;
+  margin-top: 0;
+}
+
+a.text-link:hover {
+  color: #003a44;
+  text-decoration: underline;
+  transform: none;
+  background: transparent;
+}
+
+.auth-helper {
+  display: block;
+  margin-top: 26px;
+  color: #333;
+  font-weight: 600;
 }
 
 .success-card {

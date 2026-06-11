@@ -53,19 +53,33 @@ npm install
 node scripts/testdata.js
 ```
 
-### 5. Ustawienie zmiennych środowiskowych
+### 5. Przygotowanie pliku .env
 
-Aplikacja automatycznie pobiera zmienne z pliku `.env` korzystając z `dotenv`.
-Przykład pliku `.env`:
-```ini
-SECRET=moja-tajna-wartosc
-PEPPER=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=admin1234
-PORT=6767
+Najłatwiej wygenerować plik `.env` automatycznie:
+```bash
+npm run generate-env
+```
+Jeżeli plik już istnieje i chcesz go nadpisać, użyj:
+```bash
+npm run generate-env -- --force
+```
+Możesz też podać własne wartości:
+```bash
+npm run generate-env -- --admin-username=admin --admin-password=SuperTajne123 --secret=abcd... --pepper=1234...
 ```
 
-Jeżeli nie podasz `ADMIN_USERNAME` / `ADMIN_PASSWORD`, aplikacja utworzy konto `admin` / `admin1234`.
+Plik `.env` powinien zawierać przynajmniej:
+```ini
+SECRET=<losowa wartość>
+PEPPER=<losowa wartość>
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=<silne hasło>
+NODE_ENV=development
+```
+
+Aplikacja pobiera wartości z `.env` przy pomocy `dotenv`.
+
+Jeżeli nie skonfigurujesz `ADMIN_USERNAME` i `ADMIN_PASSWORD`, aplikacja nie utworzy konta administratora automatycznie.
 
 ### 6. Uruchomienie serwera:
 ```bash

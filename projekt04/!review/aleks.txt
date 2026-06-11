@@ -1,0 +1,6 @@
+-Niebezpieczne znaczki w kodzie: W pliku generic.ejs używasz kodu <%- %>
+-Brak ochrony przed oszustwami (CSRF): Aplikacja w ogóle nie sprawdza, czy formularze są wysyłane bezpiecznie z Twojej strony
+-Gdy zapisujesz kogoś na zawody, jego imię, nazwisko i dane pojazdu wyświetlają się bezpośrednio w pasku przeglądarki
+-W jednym pliku tworzysz tabelę Users z wielkiej litery, a w drugim users_auth z małej
+-Twój skrypt do dodawania testowych kierowców próbuje wrzucić ich do bazy, zanim program w ogóle stworzy dla nich miejsce (tabele
+-brak czyszczenia starych ciasteczek

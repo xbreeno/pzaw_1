@@ -6,6 +6,7 @@ const db_path = "./data.sqlite";
 const db = new DatabaseSync(db_path, { readBigInts: true });
 
 const SESSION_COOKIE = "session_id";
+const CSRF_COOKIE = "csrf_token";
 const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
 
 db.exec(`
@@ -69,6 +70,7 @@ export function deleteSession(res) {
     db_ops.delete_session.run(session.id);
   }
   res.clearCookie(SESSION_COOKIE, { path: "/" });
+  res.clearCookie(CSRF_COOKIE, { path: "/" });
   res.locals.session = null;
   res.locals.currentUser = null;
 }
